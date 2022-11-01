@@ -33,7 +33,7 @@ deviceRouter.post('/update', (req, res) => {
 });
 
 deviceRouter.delete('/delete', (req, res) => {
-  deleteDevice(req.body?.deviceId);
+  deleteDevice(req.body.deviceId);
   res.status(200).send({
     status: 'success',
     message: 'delete device success',
