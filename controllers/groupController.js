@@ -10,7 +10,7 @@ const addGroup = (username, groupName) => {
     updateTime: new Date().toISOString().slice(0,10),
   });
   let userInfo = users.get(username);
-  const userGroups = userInfo?.groups || [];
+  const userGroups = userInfo? userInfo.groups : [];
   userGroups.push(groupId);
   userInfo.groups = userGroups;
   users.set(username, userInfo);
@@ -34,7 +34,7 @@ const updateGroup = ({username, id, groupName, config, devices}) => {
 const deleteGroup = groupId => {
   const username = groups.get(groupId).username;
   let userInfo = users.get(username);
-  const groupSet = new Set(userInfo?.groups || []);
+  const groupSet = new Set(userInfo ? userInfo.groups : []);
   groupSet.delete(groupId);
   userInfo.groups = [...groupSet];
   users.set(username, userInfo);
@@ -49,8 +49,8 @@ const getGroupConfig = groupId => {
 
 const getUserGroup = user => {
   const rst = [];
-  const groupIdArr = users.get(user)?.groups || [];
-  groupIdArr?.forEach(id => {
+  const groupIdArr = users.get(user) ? users.get(user).groups : [];
+  groupIdArr.forEach(id => {
     rst.push(groups.get(id));
   });
   return rst;

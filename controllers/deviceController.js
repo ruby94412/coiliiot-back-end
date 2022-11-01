@@ -11,7 +11,7 @@ const addDevice = ({groupId, deviceId, deviceType, deviceComment}) => {
     id: deviceId,
   });
   let groupInfo = groups.get(groupId);
-  const groupDevices = groupInfo?.devices || [];
+  const groupDevices = groupInfo? groupInfo.devices : [];
   groupDevices.push(deviceId);
   groupInfo.devices = groupDevices;
   groups.set(groupId, groupInfo);
@@ -40,7 +40,7 @@ const updateDevice = ({
 const deleteDevice = deviceId => {
   const groupId = devices.get(deviceId).groupId;
   let groupInfo = groups.get(groupId);
-  const deviceSet = new Set(groupInfo?.devices || []);
+  const deviceSet = new Set(groupInfo ? groupInfo.devices : []);
   deviceSet.delete(deviceId);
   groupInfo.devices = [...deviceSet];
   groups.set(groupId, groupInfo);
@@ -51,8 +51,8 @@ const deleteDevice = deviceId => {
 
 const getDevices = groupId => {
   const rst = [];
-  const deviceIdArr = groups.get(groupId)?.devices || [];
-  deviceIdArr?.forEach(id => {
+  const deviceIdArr = groups.get(groupId) ? groups.get(groupId).devices : [];
+  deviceIdArr.forEach(id => {
     rst.push(devices.get(id));
   });
   return rst;
