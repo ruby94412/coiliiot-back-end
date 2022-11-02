@@ -11,4 +11,12 @@ testRouter.get("/", (req, res) => {
     });
 });
 
+testRouter.post("/post", (req, res) => {
+    console.log(req.body);
+    res.status(200).send({
+        status: "success",
+        data: JSON.parse(TEST_JSON_STRING),
+    });
+});
+
 module.exports = testRouter;
