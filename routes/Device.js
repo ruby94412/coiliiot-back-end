@@ -1,18 +1,18 @@
 const {Router} = require('express');
 const deviceRouter = Router();
-const TEST_JSON_STRING = `{"test": "test"}`
 const {
   addDevice,
   deleteDevice,
   getDevices,
   updateDevice,
+  getDeviceConfig,
 } = require('../controllers/deviceController');
 
 deviceRouter.post('/getDeviceList', (req, res) => {
-  const devices = getDevices(req.body.groupId)
+  const devices = getDevices(req.body.groupId);
   res.status(200).send({
     status: 'success',
-    data: devices,
+    data: devices || [],
   });
 });
 
@@ -41,8 +41,9 @@ deviceRouter.delete('/delete', (req, res) => {
 });
 
 deviceRouter.get('/deviceId/:deviceId/configVersion/:configVersion', (req, res) => {
-  console.log(req.params.deviceId, req.params.configVersion);
-  res.status(200).send(JSON.parse(TEST_JSON_STRING));
+  const {deviceId, configVersion} = req.params;
+  const config = getDeviceConfig(deviceId, configVersion);
+  res.status(200).send(config);
 });
 
 module.exports = deviceRouter;
