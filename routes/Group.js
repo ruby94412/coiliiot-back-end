@@ -7,7 +7,7 @@ const {
   updateGroup,
 } = require('../controllers/groupController');
 
-groupRouter.post('/get', (req, res) => {
+groupRouter.post('/getGroupList', (req, res) => {
   const groups = getUserGroup(req.body.username);
   res.status(200).send({
     status: 'success',
