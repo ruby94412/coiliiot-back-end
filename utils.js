@@ -31,6 +31,8 @@ const getUid = (type) => {
       return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4();
     case 'device':
       return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+    case 'token':
+      return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4() + '-' + s4() + s4() + s4() + s4(); 
   }
   
 }
@@ -43,4 +45,5 @@ module.exports = {
   users: getData('users'),
   devices: getData('devices'),
   groups: getData('groups'),
+  refreshTokens: getData('refreshTokens'),
 }

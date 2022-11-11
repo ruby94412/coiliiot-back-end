@@ -1,9 +1,11 @@
 {
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
     "express-ws": "^5.0.2",
+    "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.11.0",
     "node-uuid": "^1.4.8",
     "sprintf-js": "^1.1.2",
