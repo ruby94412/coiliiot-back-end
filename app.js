@@ -18,6 +18,7 @@ app.use(express.json());
 app.use(routes);
 
 require('./routes/Login')(app);
+require('./routes/Group')(app);
 // local test address to be changed when deployed
 const server = app.listen(PORT, () => {
   console.log(`listening on ${PORT}`)

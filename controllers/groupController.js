@@ -1,7 +1,8 @@
 const utils = require('../utils');
 const {groups, users} = utils;
 
-const addGroup = (username, groupName) => {
+const addGroup = (req, res) => {
+  const {username, groupName} = req.body;
   const groupId = utils.getUid('group');
   groups.set(groupId, {
     username: username,
@@ -17,9 +18,14 @@ const addGroup = (username, groupName) => {
 
   utils.updateData('users', users);
   utils.updateData('groups', groups);
+  return res.status(200).send({
+    status: 'success',
+    message: 'add group success',
+  });
 }
 
-const updateGroup = ({username, id, groupName, config, devices}) => {
+const updateGroup = (req, res) => {
+  const {username, id, groupName, config, devices} = req.body;
   groups.set(id, {
     username,
     groupName,
@@ -29,9 +35,14 @@ const updateGroup = ({username, id, groupName, config, devices}) => {
     devices,
   });
   utils.updateData('groups', groups);
+  return res.status(200).send({
+    status: 'success',
+    message: 'update group success',
+  });
 }
 
-const deleteGroup = groupId => {
+const deleteGroup = (req, res) => {
+  const {groupId} = req.body.data;
   const username = groups.get(groupId).username;
   let userInfo = users.get(username);
   const groupSet = new Set(userInfo ? userInfo.groups : []);
@@ -41,19 +52,28 @@ const deleteGroup = groupId => {
   utils.updateData('users', users);
   groups.delete(groupId);
   utils.updateData('groups', groups);
+  return res.status(200).send({
+    status: 'success',
+    message: 'delete group success',
+  });
 }
 
-const getGroupConfig = groupId => {
+const getGroupConfig = (req, res) => {
+  const {groupId} = req.body;
   return groups.get(groupId).config;
 }
 
-const getUserGroup = user => {
+const getUserGroup = (req, res) => {
+  const username = req.body.username;
   const rst = [];
-  const groupIdArr = users.get(user) ? users.get(user).groups : [];
+  const groupIdArr = users.get(username) ? users.get(username).groups : [];
   groupIdArr.forEach(id => {
     rst.push(groups.get(id));
   });
-  return rst;
+  return res.status(200).send({
+    status: 'success',
+    data: rst,
+  });
 }
 
 module.exports = {

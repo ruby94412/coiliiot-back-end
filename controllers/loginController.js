@@ -27,19 +27,19 @@ const createRefreshToken = username => {
 const validateUser = (req, res) => {
   const {username, password} = req.body;
   if (!users.has(username)){
-    return res.status(404).send({message: 'User not found'});
+    return res.status(404).send({message: '用户名不存在'});
   }
   const isPasswordValid = bcrypt.compareSync(password, users.get(username).password);
   if (!isPasswordValid){
     return res.status(401).send({
       accessToken: null,
-      message: 'Invalid Password',
+      message: '密码错误',
     });
   }
   createRefreshToken(username);
   const user = users.get(username);
   const token = jwt.sign({id: user.id}, config.secret, {
-    expiresIn: 86400,
+    expiresIn: config.jwtExpiration,
   });
   return res.status(200).send({
     accessToken: token,
@@ -65,7 +65,7 @@ const registerUser = (req, res) => {
 }
 
 const refreshToken = (req, res) => {
-  const { refreshToken: requestToken } = req.body;
+  const {refreshToken: requestToken} = req.body;
 
   if (requestToken == null) {
     return res.status(403).json({ message: "Refresh Token is required!" });
@@ -83,10 +83,10 @@ const refreshToken = (req, res) => {
     });
   }
 
-  let newAccessToken = jwt.sign({ id: refreshToken.user.id }, config.secret, {
+  const user = users.get(refreshToken.username);
+  let newAccessToken = jwt.sign({id: user.id}, config.secret, {
     expiresIn: config.jwtExpiration,
   });
-  const user = users.get(refreshToken.username);
   users.set(refreshToken.username, {
     ...user,
     accessToken: newAccessToken,
