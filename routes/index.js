@@ -8,6 +8,6 @@ const router = Router();
 // router.use('/login', loginRouter);
 router.use('/device', deviceRouter);
 // router.use('/group', groupRouter);
-router.use('/testAir724', testRouter);
+router.use('/test', testRouter);
 
 module.exports = router;

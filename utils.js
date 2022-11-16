@@ -2,11 +2,15 @@ const fs = require('fs');
 const path = require('path');
 
 const getData = type => {
-  return new Map(Object.entries(JSON.parse(
-    fs.readFileSync(
-      path.resolve(__dirname, `./data/${type}.json`),
-      'utf8'
-  ))));
+  const file = fs.readFileSync(
+    path.resolve(__dirname, `./data/${type}.json`),
+    'utf8'
+  );
+  try {
+    return new Map(Object.entries(JSON.parse(file)));
+  } catch (e) {
+    return new Map();
+  }
 }
 
 const updateData = (type, map) => {

@@ -1,22 +1,18 @@
-const TEST_JSON_STRING = `{"fota": 0, "uartReadTime": 25, "flow": "", "param_ver": 1, "pwrmod": "normal", "password": "", "netReadTime": 0, "passon": 1, "nolog": "1", "plate": 0, "reg": {"type": 3, "data": "273L62XH9LA89ARF", "prefix": "", "postfix": ""}, "convert": 0, "uconf": [[1, "9600", 8, 2, 0, ""], [], []], "conf": [["tcp", {"type": 0, "data": "273L62XH9LA89ARF", "prefix": "", "postfix": ""}, 300, "mbrtu.tlink.io", "8651", 1, "", "", "", ""], [], [], [], [], [], []], "preset": {"number": "", "delay": "", "smsword": ""}, "apn": ["", "", ""], "cmds": [[""], [], []], "pins": ["pio0", "pio0", "pio0"], "gps": {"pio": [], "fun": []}, "upprot": ["", "", "", "", "", "", ""], "dwprot": ["", "", "", "", "", "", ""], "warn": {"adc0": [], "adc1": [], "vbatt": [], "gpio": []}}`;
-
 const {Router} = require('express');
+const path = require('path');
 const testRouter = Router();
 
-testRouter.get("/", (req, res) => {
-    console.log(req.params);
-    res.status(200).send({
-        status: "success",
-        data: JSON.parse(TEST_JSON_STRING),
-    });
+// const fileName = 'testPic.png';
+testRouter.get('/download/:id/:firmware_version', (req, res) => {
+  console.log('to download', req.params);
+    const filePath = path.resolve(__dirname, '../data/firmware.bin');
+    res.download(filePath);
 });
+// localhost:8080/test/download
 
-testRouter.post("/post", (req, res) => {
-    console.log(req.body);
-    res.status(200).send({
-        status: "success",
-        data: JSON.parse(TEST_JSON_STRING),
-    });
+testRouter.get('/hasUpdates/:id/:firmware_version', (req, res) => {
+  console.log(req.params);
+  res.status(200).send({hasUpdate: req.params.firmware_version !== '2.0', newVersion: '2.0'});
 });
 
 module.exports = testRouter;
