@@ -1,49 +1,29 @@
-const {Router} = require('express');
-const deviceRouter = Router();
 const {
   addDevice,
   deleteDevice,
   getDevices,
   updateDevice,
   getDeviceConfig,
+  checkDeviceFirmwareVersion,
+  downloadFirmware,
 } = require('../controllers/deviceController');
+const {verifyToken} = require('../middleware/authJwt');
 
-deviceRouter.post('/getDeviceList', (req, res) => {
-  const devices = getDevices(req.body.groupId);
-  res.status(200).send({
-    status: 'success',
-    data: devices || [],
+const deviceRoutes = app => {
+  app.use((req, res, next) => {
+    res.header(
+      "Access-Control-Allow-Headers",
+      "x-access-token, Origin, Content-Type, Accept"
+    );
+    next();
   });
-});
+  app.post('/device/getDeviceList', [verifyToken], getDevices);
+  app.post('/device/add', [verifyToken], addDevice);
+  app.post('/device/update', [verifyToken], updateDevice);
+  app.post('/device/delete', [verifyToken], deleteDevice);
+  app.get('/config/:deviceId', getDeviceConfig);
+  app.get('/firmware/:deviceId/:firmware_version', checkDeviceFirmwareVersion);
+  app.get('/firmware/download/:deviceId/:firmware_version', downloadFirmware);
+}
 
-deviceRouter.post('/add', (req, res) => {
-  const addResult = addDevice(req.body);
-  res.status(200).send({
-    status: addResult ? 'success' : 'failure',
-    message: addResult ? 'add device success' : 'failure',
-  });
-});
-
-deviceRouter.post('/update', (req, res) => {
-  updateDevice(req.body);
-  res.status(200).send({
-    status: 'success',
-    message: 'update device success',
-  });
-});
-
-deviceRouter.delete('/delete', (req, res) => {
-  deleteDevice(req.body.deviceId);
-  res.status(200).send({
-    status: 'success',
-    message: 'delete device success',
-  });
-});
-
-deviceRouter.get('/deviceId/:deviceId/configVersion/:configVersion', (req, res) => {
-  const {deviceId, configVersion} = req.params;
-  const config = getDeviceConfig(deviceId, configVersion);
-  res.status(200).send(config);
-});
-
-module.exports = deviceRouter;
+module.exports = deviceRoutes;

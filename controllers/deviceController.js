@@ -1,8 +1,11 @@
 const utils = require('../utils');
 const {devices, groups} = utils;
 
-const addDevice = ({groupId, deviceId, deviceType, deviceComment}) => {
-  if (devices.has(deviceId)) return false;
+const addDevice = (req, res) => {
+  const {groupId, deviceId, deviceType, deviceComment} = req.body;
+  if (devices.has(deviceId)) {
+    return res.status(404).send({message: 'device not found'});
+  }
   devices.set(deviceId, {
     groupId,
     deviceComment,
@@ -18,15 +21,14 @@ const addDevice = ({groupId, deviceId, deviceType, deviceComment}) => {
 
   utils.updateData('groups', groups);
   utils.updateData('devices', devices);
-  return true;
+  return res.status(200).send({
+    status: 'success',
+    message: 'add device success',
+  });
 }
 
-const updateDevice = ({
-  groupId,
-  id,
-  deviceComment,
-  deviceType
-}) => {
+const updateDevice = (req, res) => {
+  const {groupId, id, deviceComment, deviceType} = req.body;
   devices.set(id, {
     groupId,
     deviceComment,
@@ -35,9 +37,14 @@ const updateDevice = ({
     deviceType,
   });
   utils.updateData('devices', devices);
+  return res.status(200).send({
+    status: 'success',
+    message: 'update device success',
+  });
 }
 
-const deleteDevice = deviceId => {
+const deleteDevice = (req, res) => {
+  const {deviceId} = req.body.data;
   const groupId = devices.get(deviceId).groupId;
   let groupInfo = groups.get(groupId);
   const deviceSet = new Set(groupInfo ? groupInfo.devices : []);
@@ -47,22 +54,43 @@ const deleteDevice = deviceId => {
   utils.updateData('groups', groups);
   devices.delete(deviceId);
   utils.updateData('devices', devices);
+  return res.status(200).send({
+    status: 'success',
+    message: 'delete device success',
+  });
 }
 
-const getDevices = groupId => {
+const getDevices = (req, res) => {
+  const groupId = req.body.groupId;
   const rst = [];
   const deviceIdArr = groups.get(groupId)?.devices || [];
   deviceIdArr.forEach(id => {
     rst.push(devices.get(id));
   });
-  return rst;
+  return res.status(200).send({
+    status: 'success',
+    data: rst,
+  });
 }
 
-const getDeviceConfig = (deviceId, configVersion) => {
+const getDeviceConfig = (req, res) => {
+  const {deviceId} = req.params;
   const deviceInfo = devices.get(deviceId);
   const {groupId} = deviceInfo;
   const groupInfo = groups.get(groupId);
-  return groupInfo.config;
+  return res.status(200).send(groupInfo.config);
+}
+
+const checkDeviceFirmwareVersion = (req, res) => {
+  return res.status(200).send({
+    hasUpdate: req.params.firmware_version !== '2.0',
+    newVersion: '2.0'
+  });
+}
+
+const downloadFirmware = (req, res) => {
+  const filePath = path.resolve(__dirname, '../data/firmware.bin');
+  return res.download(filePath);
 }
 
 module.exports = {
@@ -71,4 +99,6 @@ module.exports = {
   getDevices,
   updateDevice,
   getDeviceConfig,
+  checkDeviceFirmwareVersion,
+  downloadFirmware,
 }
