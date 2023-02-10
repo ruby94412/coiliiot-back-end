@@ -74,8 +74,12 @@ const getDevices = (req, res) => {
 }
 
 const getDeviceConfig = (req, res) => {
-  const {deviceId} = req.params;
-  const deviceInfo = devices.get(deviceId);
+  console.log(req.body);
+  const {id} = req.body;
+  const deviceInfo = devices.get(id);
+  if (!deviceInfo) {
+    return res.status(404).send("Device Not Registered In Database");
+  }
   const {groupId} = deviceInfo;
   const groupInfo = groups.get(groupId);
   return res.status(200).send(groupInfo.config);

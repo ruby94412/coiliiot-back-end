@@ -21,7 +21,7 @@ const deviceRoutes = app => {
   app.post('/device/add', [verifyToken], addDevice);
   app.post('/device/update', [verifyToken], updateDevice);
   app.post('/device/delete', [verifyToken], deleteDevice);
-  app.get('/config/:deviceId', getDeviceConfig);
+  app.get('/config', getDeviceConfig);
   app.get('/firmware/:deviceId/:firmware_version', checkDeviceFirmwareVersion);
   app.get('/firmware/download/:deviceId/:firmware_version', downloadFirmware);
 }

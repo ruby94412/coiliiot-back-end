@@ -2,10 +2,11 @@ const udp = require('dgram');
 // const port = 4321;
 // const address = '192.168.4.7';
 const server = udp.createSocket('udp4');
+const testBuffer = Buffer.from([0x01, 0x04, 0x00, 0x00, 0x00, 0x01, 0x31, 0xCA]);
 
 server.on('message', (msg, rinfo) => {
-  console.log(`server got: ${msg} from ${rinfo.address}:${rinfo.port}`);
-  server.send('hello from server', rinfo.port, rinfo.address, err => {
+  console.log(`server got: ${Array.apply([], msg).join(",")} from ${rinfo.address}:${rinfo.port}`);
+  server.send(testBuffer, rinfo.port, rinfo.address, err => {
     if (err) {
       console.log(err);
     } else {
@@ -13,11 +14,11 @@ server.on('message', (msg, rinfo) => {
     }
   })
 });
-const testBuffer = Buffer.from([0x01, 0x04, 0x00, 0x00, 0x00, 0x01, 0x31, 0xCA]);
+
 
 server.bind({
   port: 4321,
-  address: "192.168.4.7",
+  address: "192.168.4.27",
 });
 
 // const client = udp.createSocket('udp4');
