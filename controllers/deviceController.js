@@ -1,5 +1,5 @@
 const utils = require('../utils');
-const {devices, groups} = utils;
+const {devices, groups, webConfigToDeviceConfig} = utils;
 
 const addDevice = (req, res) => {
   const {groupId, deviceId, deviceType, deviceComment} = req.body;
@@ -74,7 +74,6 @@ const getDevices = (req, res) => {
 }
 
 const getDeviceConfig = (req, res) => {
-  console.log(req.body);
   const {id} = req.body;
   const deviceInfo = devices.get(id);
   if (!deviceInfo) {
@@ -82,7 +81,7 @@ const getDeviceConfig = (req, res) => {
   }
   const {groupId} = deviceInfo;
   const groupInfo = groups.get(groupId);
-  return res.status(200).send(groupInfo.config);
+  return res.status(200).send(webConfigToDeviceConfig(groupInfo.config));
 }
 
 const checkDeviceFirmwareVersion = (req, res) => {

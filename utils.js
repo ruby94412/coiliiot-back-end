@@ -41,11 +41,54 @@ const getUid = (type) => {
   
 }
 
+const nodeToJson = (node) => {
+  if (!node) return null;
+  const {
+    propertyKey, propertyValue, propertyType, children,
+  } = node;
+  const rst = {};
+  switch (propertyType) {
+    case 3: {
+      let temp = {};
+      if (children?.length) {
+        children.forEach((child) => {
+          temp = { ...temp, ...nodeToJson(child) };
+        });
+      }
+      rst[propertyKey] = temp;
+      break;
+    }
+    case 2:
+      // eslint-disable-next-line no-template-curly-in-string
+      rst[propertyKey] = '${Date}';
+      break;
+    case 0:
+    case 1:
+    default:
+      rst[propertyKey] = propertyValue;
+      break;
+  }
+  return rst;
+};
+
+const webConfigToDeviceConfig = (config) => {
+  const { networkConfigs } = config;
+  if (!networkConfigs.length) return config;
+  const arr = [];
+  networkConfigs.forEach((networkConfig) => {
+    const { customizedJson } = networkConfig;
+    const jsonObj = nodeToJson(customizedJson)[''];
+    arr.push({ ...networkConfig, customizedJson: jsonObj});
+  });
+  return { ...config, networkConfigs: arr};
+};
 
 module.exports = {
   getData,
   updateData,
   getUid,
+  nodeToJson,
+  webConfigToDeviceConfig,
   users: getData('users'),
   devices: getData('devices'),
   groups: getData('groups'),
