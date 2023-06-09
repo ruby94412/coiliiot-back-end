@@ -47,26 +47,16 @@ const nodeToJson = (node) => {
     propertyKey, propertyValue, propertyType, children,
   } = node;
   const rst = {};
-  switch (propertyType) {
-    case 3: {
-      let temp = {};
+  if (propertyType === 4) {
+    let temp = {};
       if (children?.length) {
         children.forEach((child) => {
           temp = { ...temp, ...nodeToJson(child) };
         });
       }
       rst[propertyKey] = temp;
-      break;
-    }
-    case 2:
-      // eslint-disable-next-line no-template-curly-in-string
-      rst[propertyKey] = '${Date}';
-      break;
-    case 0:
-    case 1:
-    default:
-      rst[propertyKey] = propertyValue;
-      break;
+  } else {
+    rst[propertyKey] = propertyValue;
   }
   return rst;
 };
